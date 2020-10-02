@@ -1,0 +1,297 @@
+#include<iostream>
+#include<math.h>
+#include<conio.h>
+#include<stdlib.h>
+#define e 2.718281828													//Constants
+#define pi 3.141592653
+char repeat,repeat_sub;
+int choice,n,g,m,m_gamma,n_gamma;
+float error;
+double temp1,temp2;
+
+using namespace std;
+
+			/*All the functions used in software*/
+
+double f_beta(double x, int n_gamma, int m_gamma);
+double f_gamma(double x,int n_gamma);
+double beta (int n, int n_gamma,int m_gamma);
+double gamma(int n, int n_gamma);
+int gamma_rel(int gama);
+float beta_rel(int m, int n);
+float facit_strling(float n);
+float euler_correct(float n);
+float percenterror(float m, float n);
+double erfc(int x);
+double erf(int x);
+int factorial(int n);
+void menu (void);
+double checkerror(void);
+
+			//Definations of functions
+
+double f_beta(double x, int n_gamma, int m_gamma)
+{
+  	return pow(x,m_gamma-1)*pow(1-x,(n_gamma-1));
+}
+
+double f_gamma(double x,int n_gamma)
+{
+  return pow(x,n_gamma-1)*pow(e,(-1*x));
+}
+
+double beta (int n, int n_gamma,int m_gamma)
+{
+	unsigned int i;
+  	int initial_limit=0,final_limit=1;
+ 	 double b,h,x,sum=0,integral;
+  	//Begin Simpson's Procedure:
+  	h=fabs(final_limit-initial_limit)/n;
+  	for(i=1;i<n;i++){
+	    x=initial_limit+i*h;
+    	if(i%2==0){
+	    	sum=sum+2*f_beta(x,n_gamma,m_gamma);
+	    }
+	    else{
+     	 	sum=sum+4*f_beta(x,n_gamma,m_gamma);
+    	}
+	}
+  	integral=(h/3)*(f_beta(initial_limit,n_gamma,m_gamma)+f_beta(final_limit,n_gamma,m_gamma)+sum);
+  	temp2=integral;
+  	temp1=beta_rel(n_gamma,m_gamma);
+   	//Print the answer
+   	return integral;
+}
+
+
+double gamma(int n, int n_gamma)
+{
+	unsigned int i;
+  	int initial_limit=0,final_limit=1000;
+  	double b,h,x,sum=0,integral;
+  	//Begin Simpson's Procedure:
+  	h=fabs(final_limit-initial_limit)/n;
+  	for(i=1;i<n;i++){
+	    x=initial_limit+i*h;
+	    if(i%2==0){
+      	sum=sum+2*f_gamma(x,n_gamma);
+    	}
+    	else{
+      	sum=sum+4*f_gamma(x,n_gamma);
+    	}
+  	}
+  	integral=(h/3)*(f_gamma(initial_limit,n_gamma)+f_gamma(final_limit,n_gamma)+sum);
+   	//Print the answer
+   	temp2=integral;
+   	temp1=gamma_rel(n_gamma);
+   	return integral;
+}
+
+float beta_rel (int m,int n)
+{
+    int gm,gn,gmn;
+    float s;
+    gmn=m+n;
+    gm=gamma_rel(m);
+    gn=gamma_rel(n);
+    gmn=gamma_rel(gmn);
+    s=gm*gn;
+    s=s/gmn;
+    return s;
+}
+
+int gamma_rel(int gama)
+{
+    int product=1,i;
+    for(i=1;i<=gama-1;i++)
+    {
+        product=product*i;
+    }
+    return product;
+}
+
+float fact_stirling(float n)
+{
+	n=(sqrt(2*pi*n))*(pow(n,n))*(pow(e,(-1*n)));
+	return n;
+}
+
+float euler_correct(float n)
+{
+    n=(sqrt(2*pi*n))*(pow(n,n))*(pow(e,(-1*n)));
+    n=n*(1+(1/(12*n))+(1/(288*n*n))-(139/(51840*n*n*n))-(571/(2488320*n*n*n*n)));
+    return n;
+}
+
+float percenterror(float obt, float abs)
+{
+    float error;
+	if(obt>=abs)
+        error=((obt/abs)*100)-100;
+	else
+        error=-1*(100-((obt/abs)*100));
+    return error;
+}
+
+double erf(int x)
+{
+	double a1 =  0.254829592;											//Constants
+    double a2 = -0.284496736;
+    double a3 =  1.421413741;
+    double a4 = -1.453152027;
+    double a5 =  1.061405429;
+    double p  =  0.3275911;
+
+    float sign = 1;
+    if (x < 0)
+        sign = -1;
+    x = abs(x);
+    double t = 1.0/(1.0 + p*x);
+    double y = 1.0 - (((((a5*t + a4)*t) + a3)*t + a2)*t + a1)*t*pow(e,(-1*x*x));
+
+    return sign*y;
+}
+
+double erfc(int x)
+{
+    return 1-erf(x);
+}
+
+int factorial(int n)
+{
+    if(n > 1)
+        return n * factorial(n - 1);
+    else
+        return 1;
+}
+
+void menu (void)
+{
+    system("cls");
+    cout<<"\tSoftware to Calculate Factorial, Gamma, Beta, Error functions, Stirling's Approximation and Euler's Correction\n\n\n";
+    cout<<"\n\n\t1.\t Calculate Factorial-";
+    cout<<"\n\t2.\t Calculate Factorial via Stirlings approximation-";
+    cout<<"\n\t3.\t Calculate Factorial with Euler's correction- ";
+    cout<<"\n\t4.\t Calculate Gamma by simpson method- ";
+    cout<<"\n\t5.\t Calculate Gamma by relation- ";
+    cout<<"\n\t6.\t Calculate Beta by simpson method- ";
+    cout<<"\n\t7.\t Calculate Beta by realtion- ";
+    cout<<"\n\t8.\t Calculate Error function- ";
+    cout<<"\n\t9.\t Calculate Complementry Error function- ";
+    cout<<"\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t0. EXIT\n";
+    cout<<"\n\n\tEnter the choice by serial number (0-9)- ";
+    cin>>choice;
+}
+
+double checkerror(void)
+{
+    cout<<"\n\tWant to calculate error (Y/N) ?";
+    cin>>repeat_sub;
+    if(repeat_sub=='y'||repeat_sub=='Y')
+        cout<<"\n\n\tThe % error is= "<<percenterror(temp2, temp1)<<"%";    
+}
+			//Begining of main
+
+int main()
+{
+    do
+    {
+	    menu();
+        switch(choice)
+        {
+            case(0):
+            {
+                exit(0);
+            }
+            case(1):
+            {
+                system("cls");
+                cout<<"\n\n\t1.\tYou've chosen to calculate Factorial- ";
+                cout<<"\n\n\tEnter a positive integer: ";
+                cin>>n;
+                cout<<"\n\tFactorial of " << n << " = " << factorial(n);
+            }break;
+            case(2):
+            {
+                system("cls");
+                cout<<"\n\n\t2.\tYou've chosen to calculate Factorial via Stirlings approximation- ";
+                cout<<"\n\n\tEnter the number to find factorial using \"stirlings\" approximation: ";
+                cin>>n;
+                cout<<"\n\tFactorial= "<<fact_stirling(n);
+            }break;
+            case(3):
+            {
+                system("cls");
+                cout<<"\n\n\t3.\tYou've chosen to calculate Factorial with Euler's correction- ";
+                cout<<"\n\n\tEnter the number to find factorial: ";
+                cin>>n;
+                cout<<"\n\tFactorial after applying correction= "<<euler_correct(n);
+                float temp_stir;
+                temp_stir=fact_stirling(n);
+                temp_stir=percenterror(euler_correct(n),temp_stir);
+                cout<<"\n\n\tThis method provides "<<temp_stir<<"% improvement over Stirlings approximation";
+            }break;
+            case(4):
+            {
+                system("cls");
+                cout<<"\n\n\t4.\tYou've chosen to calculate Gamma by simpson method- ";
+                cout<<"\n\n\tEnter the n for finding gamma: ";
+                cin>>n_gamma;
+                cout<<"\n\tEnter the no. of sub-intervals: ";
+                cin>>n;
+                cout<<"\n\tThe integral is: "<<gamma(n,n_gamma);
+                checkerror();
+            }break;
+            case(5):
+            {
+                system("cls");
+                cout<<"\n\n\t5.\tYou've chosen to calculate Gamma by relation- ";
+                cout<<"\n\n\tEnter the number to find its Gamma: ";
+                cin>>g;
+                cout<<"\n\tGamma of number is: "<<gamma_rel(g);
+            }break;
+            case(6):
+            {
+                system("cls");
+                cout<<"\n\n\t6.\tYou've chosen to calculate Beta by simpson method- ";
+                cout<<"\n\n\tEnter the m for finding beta: ";
+                cin>>m_gamma;
+                cout<<"\n\tEnter the n for finding beta: ";
+                cin>>n_gamma;
+                cout<<"\n\t Enter the no. of sub-intervals: ";
+                cin>>n;
+                cout<<"\n\tThe integral is: "<<beta(n,n_gamma,m_gamma);
+                checkerror();
+            }break;
+            case(7):
+            {
+                system("cls");
+                cout<<"\n\n\t7.\tYou've chosen to calculate Beta by realtion- ";
+                cout<<"\n\n\tEnter the \"m\" for beta calculation: ";
+                cin>>m;
+                cout<<"\n\tEnter the \"n\" for beta calculation: ";
+                cin>>n;
+                cout<<"\n\tBeta of given \"m&n\" is: "<<beta_rel(m,n);
+            }break;
+            case(8):
+            {
+                system("cls");
+                cout<<"\n\n\t8.\tYou've chosen to calculate Error function- ";
+                cout<<"\n\n\tEnter the number to find its error: ";
+                cin>>n;
+                cout<<"\n\tResult= "<<erf(n)<<endl;
+            }break;
+            case(9):
+            {
+                system("cls");
+                cout<<"\n\n\t9.\tYou've chosen to calculate Complementry Error function- ";
+                cout<<"\n\n\tEnter the number to find its error: ";
+                cin>>n;
+                cout<<"\n\tResult= "<<erfc(n);
+            }break;
+        }
+        cout<<"\n\n\t\t\tDo you want to continue (Y/N) ? ";
+        cin>>repeat;
+    }while(repeat=='Y'||repeat=='y');
+    return 0;
+}
