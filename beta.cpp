@@ -1,6 +1,6 @@
 #include<iostream>
 #include<math.h>
-#define e 2.718281828
+#define e 2.7182818289
 
 
 using namespace std;
